@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "/genres")
 public class GenreController {
@@ -17,8 +19,8 @@ public class GenreController {
     private GenreService service;
 
     @GetMapping
-    public ResponseEntity<Page<GenreDTO>> findAll(Pageable pageable){
-        Page<GenreDTO> genres = this.service.findAllPaged(pageable);
-        return ResponseEntity.ok().body(genres);
+    public ResponseEntity<List<GenreDTO>> findAll(){
+        Page<GenreDTO> genres = this.service.findAll();
+        return ResponseEntity.ok().body(genres.getContent());
     }
 }

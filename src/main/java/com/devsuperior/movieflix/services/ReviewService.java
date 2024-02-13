@@ -8,6 +8,7 @@ import com.devsuperior.movieflix.repositories.MovieRepository;
 import com.devsuperior.movieflix.repositories.ReviewRepository;
 import com.devsuperior.movieflix.services.exceptions.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,14 +23,10 @@ public class ReviewService {
     @Autowired
     private AuthService authService;
 
+    @PreAuthorize("hasAnyRole('MEMBER')")
     @Transactional
     public ReviewDTO insertReview(ReviewDTO reviewBody) {
-        User loggedUser = new User();
-        try {
-            loggedUser = this.authService.authenticated();
-        } catch (Exception exception) {
-            throw new UnauthorizedException("Usuário não autenticado");
-        }
+        User loggedUser = this.authService.authenticated();
 
         Review newReviewEntity = new Review();
         newReviewEntity.setText(reviewBody.getText());

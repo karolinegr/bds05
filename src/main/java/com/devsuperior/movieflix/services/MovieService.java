@@ -8,7 +8,9 @@ import com.devsuperior.movieflix.repositories.MovieRepository;
 import com.devsuperior.movieflix.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,7 @@ public class MovieService {
             Long genreId,
             Pageable pageable){
         List<Genre> genre = genreId == 0 ? null : List.of(this.genreRepository.getOne(genreId));
+        pageable = pageable.getSort().isUnsorted() ? PageRequest.of(0, 20, Sort.by("title").ascending()) : pageable;
         Page<Movie> pagedList = this.movieRepository.find(genre, pageable);
         this.movieRepository.findMoviesWithReviews(pagedList.getContent());
         return pagedList.map(item -> new MovieDTO(item, item.getReviews()));
